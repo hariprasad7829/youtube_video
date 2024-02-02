@@ -1,0 +1,123 @@
+---
+title: "la2"
+author: "Hariprasad H N"
+date: "2024-01-30"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+
+install.packages(c("tidyverse", "dplyr", "tidyr", "readr", "knitr", "jsonlite", "lubridate", "stringr", "rmarkdown"))
+install.packages("ggplot2")
+
+install.packages('tinytex')
+tinytex::install_tinytex()
+```{r}
+
+setwd("C:/Users/harsh/Music/edal2/archive")
+
+us_videos <- read.csv("USvideos.csv")
+gb_videos <- read.csv("GBvideos.csv")
+gb_comments <- read.csv("GBcomments.csv")
+
+us_categories <- jsonlite::fromJSON("US_category_id.json")
+gb_categories <- jsonlite::fromJSON("GB_category_id.json")
+
+#data inspection
+str(us_videos)
+head(us_videos)
+str(us_categories)
+#for data summery
+summary(us_videos)
+
+library(tidyverse)
+us_category_info <- us_categories$items %>%
+                    select(category_id = id)
+us_videos <- merge(us_videos, us_category_info, by="category_id")
+
+str(us_categories$items[1:3])
+
+#data clean
+#check missing values
+sum(is.na(us_videos))
+
+#Check the structure and types of each column:
+str(us_videos)
+
+
+#Remove rows with NA values (if that's your chosen approach):
+us_videos <- na.omit(us_videos)
+
+#Exploratory Data Analysis
+
+#Summary Statistics:
+summary(us_videos)
+
+hist(us_videos$views, main="Histogram of Views", xlab="Views")
+
+
+plot(us_videos$views, us_videos$likes, main="Views vs Likes", xlab="Views", ylab="Likes")
+
+# Data Visualizatio
+# Load necessary libraries
+library(tidyverse)
+library(jsonlite)
+library(ggplot2)
+
+# Assuming gb_comments is already loaded and cleaned up
+# Histogram of likes for the GB comments dataset
+library(ggplot2)
+gb_comments$likes <- as.numeric(gb_comments$likes)
+gb_comments$likes <- as.numeric(as.character(gb_comments$likes))
+ggplot(gb_comments, aes(x=likes)) + 
+  geom_histogram(binwidth=1) + 
+  labs(title="Histogram of Comment Likes", x="Number of Likes", y="Frequency")
+  
+ggplot(us_videos, aes(x=factor(category_id))) + 
+  geom_bar() + 
+  labs(title="Number of Videos per Category", x="Category ID", y="Count")
+
+ggplot(us_videos, aes(x=views)) + 
+  geom_histogram(bins=30) + 
+  labs(title="Histogram of Views", x="Views", y="Frequency")
+  
+ggplot(us_videos, aes(x=factor(category_id), y=views)) + 
+  geom_boxplot() + 
+  labs(title="Views by Category", x="Category ID", y="Views")
+
+# Convert the date column to a Date object before plotting
+us_videos$date <- as.Date(us_videos$date, format = "%d-%m-%yt")  # Replace 'your_date_format' with your actual date format
+us_videos <- na.omit(us_videos)  # Removes rows with NA
+# or handle infinite values if any
+us_videos <- us_videos[is.finite(us_videos$likes), ]
+
+
+ggplot(us_videos, aes(x=date, y=likes)) + 
+  geom_line() + 
+  labs(title="Likes Over Time", x="Date", y="Likes")
+
+ggplot(us_videos, aes(x=likes)) + 
+  geom_density() + 
+  labs(title="Density of Likes", x="Likes", y="Density")
+
+ggplot(us_videos, aes(x=likes)) + 
+  geom_density() + 
+  labs(title="Density of Likes", x="Likes", y="Density")
+
+ggplot(us_videos, aes(x=factor(category_id), y=likes)) + 
+  geom_violin() + 
+  labs(title="Likes by Category", x="Category ID", y="Likes")
+
+ggplot(us_videos, aes(x=likes, y=dislikes)) + 
+  geom_point() + 
+  labs(title="Likes vs. Dislikes", x="Likes", y="Dislikes")
+  
+
+
+
+
+
+
+
